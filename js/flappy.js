@@ -40,6 +40,35 @@ function pairOfBarriers(height, gap, x) {
     this.setX(x)
 }
 
-// The code below is just to test the creation of the barriers
-const b = new pairOfBarriers(700, 200, 400)
-document.querySelector('[flappy]').appendChild(b.element)
+function Barriers(height, width, gap, space, notifyPoint) {
+    this.pairs = [
+        new pairOfBarriers(height, gap, width),
+        new pairOfBarriers(height, gap, width + space),
+        new pairOfBarriers(height, gap, width + space * 2),
+        new pairOfBarriers(height, gap, width + space * 3)
+    ]
+
+    const displacement = 3
+    this.animate = () => {
+        this.pairs.forEach(pair => {
+            pair.setX(pair.getX() -  displacement)
+
+            if (pair.getX() < -pair.getWidth()) {
+                pair.setX(pair.getX() + space * this.pairs.length)
+                pair.sortGap()
+            }
+
+            const middle = width / 2
+            const crossedMiddle = (pair.getX() + displacement >= middle) && (pair.getX() < middle)
+            crossedMiddle && notifyPoint()
+        })
+    }
+}
+
+// Testing moving barriers
+const barriers = new Barriers(700, 1200, 200, 400)
+const gameArea = document.querySelector('[flappy]')
+barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
+setInterval(() => {
+    barriers.animate()
+}, 20)
