@@ -97,6 +97,29 @@ function Progress() {
     this.updateScore(0)
 }
 
+function areOverlapping(elementA, elementB) {
+    const a = elementA.getBoundingClientRect()
+    const b = elementB.getBoundingClientRect()
+
+    const horizontal = (a.left + a.width >= b.left) && (b.left + b.width >= a.left)
+    const vertical = (a.top + a.height >= b.top) && (b.top + b.height >= a.top)
+
+    return horizontal && vertical
+}
+
+function isColliding(bird, barriers) {
+    let collision = false
+    barriers.pairs.forEach(barriers => {
+        if (!collision) {
+            const topBarrier = barriers.topBarrier.element
+            const bottomBarrier = barriers.bottomBarrier.element
+
+            collision = areOverlapping(bird.element, topBarrier) || areOverlapping(bird.element, bottomBarrier)
+        }
+    })
+    return collision
+}
+
 function FlappyBird() {
     let points = 0
 
@@ -116,6 +139,10 @@ function FlappyBird() {
         const timer = setInterval(() => {
             barriers.animate()
             bird.animate()
+
+            if (isColliding(bird, barriers)) {
+                clearInterval(timer)
+            }
         }, 20)
     }
 }
