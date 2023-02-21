@@ -89,13 +89,35 @@ function Bird(gameHeight) {
     this.setY(gameHeight / 2)
 }
 
-// Testing moving barriers and bird
-const barriers = new Barriers(700, 1200, 200, 400)
-const bird = new Bird(700)
-const gameArea = document.querySelector('[flappy]')
-gameArea.appendChild(bird.element)
-barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
-setInterval(() => {
-    barriers.animate()
-    bird.animate()
-}, 20)
+function Progress() {
+    this.element = newElement('span', 'progress')
+    this.updateScore = points => {
+        this.element.innerHTML = points
+    }
+    this.updateScore(0)
+}
+
+function FlappyBird() {
+    let points = 0
+
+    const gameArea = document.querySelector('[flappy]')
+    const height = gameArea.clientHeight
+    const width = gameArea.clientWidth
+    
+    const progress = new Progress()
+    const barriers = new Barriers(height, width, 200, 400, () => progress.updateScore(++points))
+    const bird = new Bird(height)
+
+    gameArea.appendChild(progress.element)
+    gameArea.appendChild(bird.element)
+    barriers.pairs.forEach(pair => gameArea.appendChild(pair.element))
+
+    this.start = () => {
+        const timer = setInterval(() => {
+            barriers.animate()
+            bird.animate()
+        }, 20)
+    }
+}
+
+new FlappyBird().start()
