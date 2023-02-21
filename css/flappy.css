@@ -7,7 +7,7 @@
     src: url('../fonts/Pixel.ttf');
 }
 
-[wm-flappy] {
+[flappy] {
     position: relative;
     border: 5px solid darkolivegreen;
     height: 700px;
